@@ -1,0 +1,21 @@
+name: network_inspector
+description: A professional API debugging tool for Flutter apps. Captures and displays network requests in real-time with a beautiful UI.
+version: 1.0.0
+homepage: https://github.com/your-org/network_inspector
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.6.5
+  flutter_screenutil: ^5.9.0
+  gap: ^3.0.1
+  share_plus: ">=7.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
