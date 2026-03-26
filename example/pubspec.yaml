@@ -8,6 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  dio: ^5.7.0
   get: ^4.6.5
   http: ^1.2.0
   api_track_inspector:

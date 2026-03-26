@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:dio/dio.dart' hide Response;
 import 'package:http/http.dart' as http;
 import 'package:api_track_inspector/api_track_inspector.dart';
 
@@ -20,8 +18,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'Network Inspector Example',
+      theme: ThemeData(useMaterial3: true),
       home: const HomePage(),
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
@@ -39,24 +38,118 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _provider = DemoProvider();
-  final _client = InspectorHttpClient(http.Client());
-  String _result = 'Press a button to generate logs';
+  final _dio = Dio();
+  String _result = 'Run any request and open the inspector FAB.';
 
-  Future<void> _getWithGetConnect() async {
-    final response = await _provider.getDemo();
-    setState(() {
-      _result = 'GetConnect: ${response.statusCode}';
-    });
+  @override
+  void initState() {
+    super.initState();
+    _setupDio();
   }
 
-  Future<void> _getWithHttp() async {
-    final response = await _client.get(
-      Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),
+  void _setupDio() {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final logId = NetworkInspector.logRequest(
+            method: options.method,
+            url: options.uri.toString(),
+            headers: Map<String, dynamic>.from(options.headers),
+            body: options.data,
+          );
+          options.extra['_inspectorLogId'] = logId;
+          options.extra['_inspectorStart'] = DateTime.now();
+          handler.next(options);
+        },
+        onResponse: (response, handler) {
+          final logId =
+              response.requestOptions.extra['_inspectorLogId'] as String?;
+          final start =
+              response.requestOptions.extra['_inspectorStart'] as DateTime?;
+          if (logId != null && start != null) {
+            NetworkInspector.logResponse(
+              logId: logId,
+              statusCode: response.statusCode,
+              body: response.data,
+              duration: DateTime.now().difference(start),
+            );
+          }
+          handler.next(response);
+        },
+        onError: (error, handler) {
+          final logId =
+              error.requestOptions.extra['_inspectorLogId'] as String?;
+          final start =
+              error.requestOptions.extra['_inspectorStart'] as DateTime?;
+          if (logId != null && start != null) {
+            NetworkInspector.logResponse(
+              logId: logId,
+              statusCode: error.response?.statusCode,
+              body: error.response?.data,
+              duration: DateTime.now().difference(start),
+              error: error.message,
+            );
+          }
+          handler.next(error);
+        },
+      ),
     );
-    setState(() {
-      _result = 'http: ${response.statusCode}';
-    });
+  }
+
+  Future<void> _sendWithHttp() async {
+    final uri = Uri.parse('https://jsonplaceholder.typicode.com/todos/1');
+    final startedAt = DateTime.now();
+
+    final logId = NetworkInspector.logRequest(
+      method: 'GET',
+      url: uri.toString(),
+      headers: const {'Accept': 'application/json'},
+    );
+
+    try {
+      final response = await http.get(uri);
+      final duration = DateTime.now().difference(startedAt);
+
+      if (logId != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: response.statusCode,
+          body: response.body,
+          duration: duration,
+        );
+      }
+
+      setState(() {
+        _result = 'package:http -> ${response.statusCode} '
+            '(${duration.inMilliseconds}ms)';
+      });
+    } catch (e) {
+      if (logId != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          duration: DateTime.now().difference(startedAt),
+          error: e.toString(),
+        );
+      }
+      setState(() {
+        _result = 'package:http failed: $e';
+      });
+    }
+  }
+
+  Future<void> _sendWithDio() async {
+    try {
+      final response = await _dio.get(
+        'https://jsonplaceholder.typicode.com/posts/1',
+      );
+      setState(() {
+        _result = 'Dio -> ${response.statusCode}';
+      });
+    } catch (e) {
+      setState(() {
+        _result = 'Dio failed: $e';
+      });
+    }
   }
 
   @override
@@ -69,13 +162,13 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ElevatedButton(
-              onPressed: _getWithGetConnect,
-              child: const Text('Send request using GetConnect'),
+              onPressed: _sendWithDio,
+              child: const Text('Send with Dio'),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: _getWithHttp,
-              child: const Text('Send request using package:http'),
+              onPressed: _sendWithHttp,
+              child: const Text('Send with package:http'),
             ),
             const SizedBox(height: 24),
             Text(_result),
@@ -83,77 +176,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-}
-
-class DemoProvider extends GetConnect {
-  @override
-  void onInit() {
-    httpClient.baseUrl = 'https://jsonplaceholder.typicode.com';
-
-    httpClient.addRequestModifier<dynamic>((request) {
-      return NetworkInspector.onRequest(request);
-    });
-
-    httpClient.addResponseModifier<dynamic>((request, response) {
-      return NetworkInspector.onResponse(request, response);
-    });
-
-    super.onInit();
-  }
-
-  Future<Response<dynamic>> getDemo() {
-    return get('/todos/1');
-  }
-}
-
-class InspectorHttpClient extends http.BaseClient {
-  final http.Client _inner;
-
-  InspectorHttpClient(this._inner);
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final start = DateTime.now();
-    final logId = NetworkInspector.logRequest(
-      method: request.method,
-      url: request.url.toString(),
-      headers: Map<String, dynamic>.from(request.headers),
-    );
-
-    try {
-      final streamedResponse = await _inner.send(request);
-      final bodyBytes = await streamedResponse.stream.toBytes();
-      final bodyText = utf8.decode(bodyBytes, allowMalformed: true);
-
-      if (logId != null) {
-        NetworkInspector.logResponse(
-          logId: logId,
-          statusCode: streamedResponse.statusCode,
-          body: bodyText,
-          duration: DateTime.now().difference(start),
-        );
-      }
-
-      return http.StreamedResponse(
-        Stream.fromIterable([bodyBytes]),
-        streamedResponse.statusCode,
-        request: streamedResponse.request,
-        headers: streamedResponse.headers,
-        reasonPhrase: streamedResponse.reasonPhrase,
-        isRedirect: streamedResponse.isRedirect,
-        persistentConnection: streamedResponse.persistentConnection,
-        contentLength: streamedResponse.contentLength,
-      );
-    } catch (e) {
-      if (logId != null) {
-        NetworkInspector.logResponse(
-          logId: logId,
-          duration: DateTime.now().difference(start),
-          error: e.toString(),
-        );
-      }
-      rethrow;
-    }
   }
 }

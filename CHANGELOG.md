@@ -2,6 +2,12 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.7
+
+- Simplified `example/` app to focus on the two most common integrations: Dio and `package:http`.
+- Removed GetConnect flow from the live example to reduce onboarding complexity.
+- Kept logging flow explicit with `logRequest` and `logResponse` so developers can copy and adapt quickly.
+
 ## 1.1.6
 
 - Improved README with a stronger quick-start section and clearer developer onboarding.

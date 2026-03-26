@@ -1,6 +1,6 @@
 name: api_track_inspector
 description: Flutter network inspector for debug builds with GetConnect interceptors, manual Dio/http logging, and an in-app request viewer.
-version: 1.1.6
+version: 1.1.7
 homepage: https://github.com/abduwael/network_inspector
 repository: https://github.com/abduwael/network_inspector
 issue_tracker: https://github.com/abduwael/network_inspector/issues
