@@ -30,7 +30,7 @@ class NetworkInspectorLogCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -47,7 +47,7 @@ class NetworkInspectorLogCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Icon(statusIcon, color: color, size: 22.sp),
@@ -62,7 +62,7 @@ class NetworkInspectorLogCard extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             horizontal: 10.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.12),
+                          color: color.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6.r),
                         ),
                         child: Text(
@@ -99,7 +99,7 @@ class NetworkInspectorLogCard extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Colors.blue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Icon(

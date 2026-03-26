@@ -98,6 +98,7 @@ class NetworkInspectorHelpers {
     if (networkInspector == null) return;
     final jsonData = networkInspector.exportLogsAsJson();
 
+    // ignore: deprecated_member_use
     Share.share(
       jsonData,
       subject: 'Network Inspector Logs - ${DateTime.now().toIso8601String()}',
@@ -119,6 +120,7 @@ class NetworkInspectorHelpers {
       'error': log.error,
     });
 
+    // ignore: deprecated_member_use
     Share.share(
       jsonData,
       subject:

@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 
@@ -109,7 +107,7 @@ class NetworkInspector {
   static Widget wrapWithFAB(Widget child) {
     if (!isEnabled) return child;
 
-    return _DraggableInspectorOverlay(child: child, config: _config);
+    return _DraggableInspectorOverlay(config: _config, child: child);
   }
 
   /// Show the Network Inspector dialog
@@ -157,9 +155,8 @@ class NetworkInspector {
 
       // Store logId in request headers for response matching
       request.headers['_network_inspector_log_id'] = logId;
-      request.headers['_network_inspector_start_time'] = DateTime.now()
-          .millisecondsSinceEpoch
-          .toString();
+      request.headers['_network_inspector_start_time'] =
+          DateTime.now().millisecondsSinceEpoch.toString();
     } catch (e) {
       debugPrint('NetworkInspector onRequest error: $e');
     }

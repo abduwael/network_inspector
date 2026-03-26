@@ -1,107 +1,168 @@
-# Network Inspector 🌐
+# network_inspector
 
-A professional API debugging tool for Flutter apps. Captures and displays network requests in real-time with a beautiful UI.
+Flutter package to inspect HTTP traffic during development.  
+It provides a draggable in-app FAB, a request log dialog, and helpers for GetConnect plus manual logging hooks for Dio and `package:http`.
 
-![Network Inspector](https://img.shields.io/badge/Flutter-Package-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
+[![pub package](https://img.shields.io/pub/v/network_inspector.svg)](https://pub.dev/packages/network_inspector)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## Features ✨
+## Why use it
 
-- 📡 **Real-time request logging** - Captures all HTTP requests automatically
-- 🎨 **Beautiful UI** - Professional dialog with statistics and detailed logs
-- 📤 **Share logs** - Export individual requests or all logs as JSON
-- 🔍 **Request details** - View headers, request body, response body, timing
-- ⚡ **Easy integration** - Just 3 lines to set up
-- 🎯 **Configurable** - Customize colors, position, max logs, and more
+- Capture request/response data while testing APIs.
+- Keep debugging UI inside the app (no external proxy needed).
+- Integrate quickly with GetConnect (`onRequest`, `onResponse`) or manually via `logRequest`, `logResponse`.
 
-## Screenshots
+## Installation
 
-```
-┌─────────────────────────────────────┐
-│ 🌐 Network Inspector                │
-│     API Request Monitor        [X]  │
-├─────────────────────────────────────┤
-│ Total: 15  Success: 12  Errors: 3   │
-├─────────────────────────────────────┤
-│ ┌─────────────────────────────────┐ │
-│ │ ✓ SUCCESS              [Share] │ │
-│ │ POST /api/login                │ │
-│ │ 10:30:45 • 245ms         ▼     │ │
-│ └─────────────────────────────────┘ │
-│ ┌─────────────────────────────────┐ │
-│ │ ✗ ERROR                [Share] │ │
-│ │ GET /api/users                 │ │
-│ │ 10:30:42 • 1250ms        ▼     │ │
-│ └─────────────────────────────────┘ │
-└─────────────────────────────────────┘
+### 1) Install from pub.dev (primary)
+
+```yaml
+dependencies:
+  network_inspector: ^1.1.5
 ```
 
-## Installation 📦
-
-### Option 1: Git URL (Recommended for private packages)
+### 2) Install from Git (secondary)
 
 ```yaml
 dependencies:
   network_inspector:
     git:
-      url: https://github.com/your-org/network_inspector.git
-      ref: main
+      url: https://github.com/abduwael/network_inspector.git
+      ref: master
 ```
 
-### Option 2: Local path
+Then run:
 
-```yaml
-dependencies:
-  network_inspector:
-    path: ../packages/network_inspector
+```bash
+flutter pub get
 ```
 
-## Quick Start 🚀
+## Quick start
 
-### Step 1: Initialize in main.dart
+### Initialize once
 
 ```dart
+import 'package:flutter/foundation.dart';
 import 'package:network_inspector/network_inspector.dart';
 
 void main() {
-  // Initialize Network Inspector (only in dev mode)
   NetworkInspector.init(
-    enabled: true,  // Set to false in production
+    enabled: kDebugMode, // recommended: debug only
     maxLogs: 100,
-    primaryColor: Colors.blue,
   );
-  
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 ```
 
-### Step 2: Add FAB overlay in your app
+### Add floating inspector button
 
 ```dart
-class MyApp extends StatelessWidget {
+MaterialApp(
+  builder: (context, child) {
+    if (child == null) return const SizedBox.shrink();
+    return NetworkInspector.wrapWithFAB(child);
+  },
+);
+```
+
+## Integration guides
+
+### GetConnect interceptor usage
+
+`onRequest` reads a temporary body value, so set it before body-based calls.
+
+```dart
+import 'package:get/get.dart';
+import 'package:network_inspector/network_inspector.dart';
+
+class ApiProvider extends GetConnect {
   @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      // ... your config
-      builder: (context, child) {
-        // Add Network Inspector FAB
-        child = NetworkInspector.wrapWithFAB(child!);
-        return child;
-      },
-    );
+  void onInit() {
+    httpClient.addRequestModifier<dynamic>((request) {
+      return NetworkInspector.onRequest(request);
+    });
+
+    httpClient.addResponseModifier<dynamic>((request, response) {
+      return NetworkInspector.onResponse(request, response);
+    });
+
+    super.onInit();
+  }
+
+  Future<Response<T>> postWithInspector<T>(String url, dynamic body) {
+    NetworkInspector.setRequestBody(body);
+    return post<T>(url, body);
+  }
+
+  Future<Response<T>> putWithInspector<T>(String url, dynamic body) {
+    NetworkInspector.setRequestBody(body);
+    return put<T>(url, body);
   }
 }
 ```
 
-### Step 3: Add interceptors to your HTTP client
+### Dio interceptor usage
 
+```dart
+import 'package:dio/dio.dart';
+import 'package:network_inspector/network_inspector.dart';
+
+final dio = Dio();
+
+dio.interceptors.add(
+  InterceptorsWrapper(
+    onRequest: (options, handler) {
+      final logId = NetworkInspector.logRequest(
+        method: options.method,
+        url: options.uri.toString(),
+        headers: Map<String, dynamic>.from(options.headers),
+        body: options.data,
+      );
+      options.extra['_inspectorLogId'] = logId;
+      options.extra['_inspectorStart'] = DateTime.now();
+      handler.next(options);
+    },
+    onResponse: (response, handler) {
+      final logId = response.requestOptions.extra['_inspectorLogId'] as String?;
+      final start = response.requestOptions.extra['_inspectorStart'] as DateTime?;
+      if (logId != null && start != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: response.statusCode,
+          body: response.data,
+          duration: DateTime.now().difference(start),
+        );
+      }
+      handler.next(response);
+    },
+    onError: (error, handler) {
+      final logId = error.requestOptions.extra['_inspectorLogId'] as String?;
+      final start = error.requestOptions.extra['_inspectorStart'] as DateTime?;
+      if (logId != null && start != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: error.response?.statusCode,
+          body: error.response?.data,
+          duration: DateTime.now().difference(start),
+          error: error.message,
+        );
+      }
+      handler.next(error);
+    },
+  ),
+);
+```
+
+### package:http wrapped client usage
+
+```dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:network_inspector/network_inspector.dart';
 
-class InspectedHttpClient extends http.BaseClient {
+class InspectorHttpClient extends http.BaseClient {
   final http.Client _inner;
-  InspectedHttpClient(this._inner);
+  InspectorHttpClient(this._inner);
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
@@ -110,45 +171,41 @@ class InspectedHttpClient extends http.BaseClient {
     final logId = NetworkInspector.logRequest(
       method: request.method,
       url: request.url.toString(),
-      headers: request.headers,
-      // For simple cases body can be omitted here; add custom capture if needed.
-      body: null,
+      headers: Map<String, dynamic>.from(request.headers),
     );
 
     try {
-      final response = await _inner.send(request);
+      final streamed = await _inner.send(request);
+      final duration = DateTime.now().difference(startedAt);
+
+      final bodyBytes = await streamed.stream.toBytes();
+      final bodyText = utf8.decode(bodyBytes, allowMalformed: true);
 
       if (logId != null) {
-        final bytes = await response.stream.toBytes();
-        final responseBody = utf8.decode(bytes, allowMalformed: true);
-
         NetworkInspector.logResponse(
           logId: logId,
-          statusCode: response.statusCode,
-          body: responseBody,
-          duration: DateTime.now().difference(startedAt),
-        );
-
-        // Re-create response because stream was consumed
-        return http.StreamedResponse(
-          Stream.value(bytes),
-          response.statusCode,
-          contentLength: bytes.length,
-          request: response.request,
-          headers: response.headers,
-          isRedirect: response.isRedirect,
-          persistentConnection: response.persistentConnection,
-          reasonPhrase: response.reasonPhrase,
+          statusCode: streamed.statusCode,
+          body: bodyText,
+          duration: duration,
         );
       }
 
-      return response;
+      return http.StreamedResponse(
+        Stream.fromIterable([bodyBytes]),
+        streamed.statusCode,
+        request: streamed.request,
+        headers: streamed.headers,
+        reasonPhrase: streamed.reasonPhrase,
+        isRedirect: streamed.isRedirect,
+        persistentConnection: streamed.persistentConnection,
+        contentLength: streamed.contentLength,
+      );
     } catch (e) {
       if (logId != null) {
         NetworkInspector.logResponse(
           logId: logId,
-          error: e.toString(),
           duration: DateTime.now().difference(startedAt),
+          error: e.toString(),
         );
       }
       rethrow;
@@ -157,92 +214,36 @@ class InspectedHttpClient extends http.BaseClient {
 }
 ```
 
-For **Dio**:
+## API reference
 
-```dart
-dio.interceptors.add(InterceptorsWrapper(
-  onRequest: (options, handler) {
-    final logId = NetworkInspector.logRequest(
-      method: options.method,
-      url: options.uri.toString(),
-      headers: options.headers.cast<String, dynamic>(),
-      body: options.data,
-    );
-    options.extra['_network_inspector_log_id'] = logId;
-    options.extra['_network_inspector_start'] = DateTime.now();
-    handler.next(options);
-  },
-  onResponse: (response, handler) {
-    final logId = response.requestOptions.extra['_network_inspector_log_id'];
-    final start = response.requestOptions.extra['_network_inspector_start'];
-    if (logId != null && start != null) {
-      NetworkInspector.logResponse(
-        logId: logId,
-        statusCode: response.statusCode,
-        body: response.data,
-        duration: DateTime.now().difference(start),
-      );
-    }
-    handler.next(response);
-  },
-  onError: (error, handler) {
-    final logId = error.requestOptions.extra['_network_inspector_log_id'];
-    final start = error.requestOptions.extra['_network_inspector_start'];
-    if (logId != null && start != null) {
-      NetworkInspector.logResponse(
-        logId: logId,
-        statusCode: error.response?.statusCode,
-        body: error.response?.data,
-        duration: DateTime.now().difference(start),
-        error: error.message,
-      );
-    }
-    handler.next(error);
-  },
-));
+- `init(...)`: initialize the inspector and config.
+- `wrapWithFAB(child)`: overlay draggable FAB to open dialog.
+- `onRequest(request)`: GetConnect request hook.
+- `onResponse(request, response)`: GetConnect response hook.
+- `logRequest(...)`: manual request logging (Dio/http/others).
+- `logResponse(...)`: manual response/error logging.
+- `clearLogs()`: clear in-memory logs.
+- `exportLogs()`: export logs JSON string.
+
+## AI quick prompt (copy/paste)
+
+Use this in your AI coding assistant:
+
+```text
+Integrate `network_inspector` into my Flutter app using debug-only mode.
+Requirements:
+1) Call NetworkInspector.init(enabled: kDebugMode) in main().
+2) Wrap app root using NetworkInspector.wrapWithFAB(child) in MaterialApp/GetMaterialApp builder.
+3) If project uses GetConnect, add NetworkInspector.onRequest/onResponse interceptors.
+4) If project uses Dio or package:http, wire NetworkInspector.logRequest/logResponse manually.
+5) Keep all integration under debug-safe behavior and avoid release overhead.
 ```
 
-## Configuration Options ⚙️
+## Notes
 
-```dart
-NetworkInspector.init(
-  enabled: true,              // Enable/disable the inspector
-  maxLogs: 100,               // Maximum logs to keep
-  primaryColor: Colors.blue,  // Primary theme color
-  secondaryColor: Color(0xFF1565C0),  // Gradient secondary color
-  fabBottomPosition: 100,     // FAB position from bottom
-  fabRightPosition: 16,       // FAB position from right
-  showShareButton: true,      // Show share button on each log
-);
-```
+- Recommended for development and QA builds.
+- For production apps, keep `enabled: false` in release (or `enabled: kDebugMode`).
 
-## API Reference 📚
+## License
 
-### NetworkInspector
-
-| Method | Description |
-|--------|-------------|
-| `init()` | Initialize with options |
-| `wrapWithFAB(child)` | Wrap widget with FAB overlay |
-| `showDialog()` | Manually show the inspector dialog |
-| `onRequest(request)` | Request interceptor for GetConnect |
-| `onResponse(request, response)` | Response interceptor for GetConnect |
-| `logRequest(...)` | Manually log a request |
-| `logResponse(...)` | Manually log a response |
-| `clearLogs()` | Clear all logs |
-| `exportLogs()` | Export logs as JSON string |
-
-## Dependencies 📋
-
-- `get: ^4.6.5` - State management and navigation
-- `flutter_screenutil: ^5.9.0` - Responsive UI
-- `gap: ^3.0.1` - Spacing widget
-- `share_plus: ^7.2.1` - Share functionality
-
-## License 📄
-
-MIT License - feel free to use in your projects!
-
-## Contributing 🤝
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+MIT License. See `LICENSE`.

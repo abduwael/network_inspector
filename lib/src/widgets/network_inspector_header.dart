@@ -27,7 +27,7 @@ class NetworkInspectorHeader extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: config.primaryColor.withOpacity(0.3),
+            color: config.primaryColor.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -38,7 +38,7 @@ class NetworkInspectorHeader extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
@@ -65,7 +65,7 @@ class NetworkInspectorHeader extends StatelessWidget {
                 Text(
                   'API Request Monitor',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 12.sp,
                   ),
                 ),
@@ -80,7 +80,7 @@ class NetworkInspectorHeader extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Icon(
