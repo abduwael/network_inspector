@@ -2,6 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.6
+
+- Improved README with a stronger quick-start section and clearer developer onboarding.
+- Added a top-level AI quick prompt for faster integration.
+- Added explicit flavor-based setup examples using `NetworkInspector.init(enabled: AppConfig.isDev)`.
+- Simplified real-app integration guidance with a framework-agnostic `MaterialApp` builder pattern.
+
 ## 1.1.5
 
 - Publishing prep release for pub.dev.

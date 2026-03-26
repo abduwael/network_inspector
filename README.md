@@ -1,10 +1,30 @@
 # api_track_inspector
 
-Flutter package to inspect HTTP traffic during development.  
-It provides a draggable in-app FAB, a request log dialog, and helpers for GetConnect plus manual logging hooks for Dio and `package:http`.
+Inspect every API call in minutes, not hours.  
+`api_track_inspector` adds a draggable in-app monitor with request details, timing, errors, and sharing, with quick integration for GetConnect, Dio, and `package:http`.
+
+No setup overhead:
+- Initialize once.
+- Wrap your app with `NetworkInspector.wrapWithFAB`.
+- Plug in your client interceptors (`onRequest`, `onResponse`) or manual hooks (`logRequest`, `logResponse`).
 
 [![pub package](https://img.shields.io/pub/v/api_track_inspector.svg)](https://pub.dev/packages/api_track_inspector)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+## Quick AI prompt
+
+Copy/paste this into your AI assistant:
+
+```text
+Integrate `api_track_inspector` into my Flutter app with dev-only visibility.
+Requirements:
+1) Initialize with NetworkInspector.init(enabled: AppConfig.isDev) in startup.
+2) Optionally configure maxLogs, colors, FAB position, and showShareButton.
+3) Wrap app root using NetworkInspector.wrapWithFAB(child) in MaterialApp/GetMaterialApp builder.
+4) If project uses GetConnect, add NetworkInspector.onRequest/onResponse interceptors.
+5) If project uses Dio or package:http, wire NetworkInspector.logRequest/logResponse manually.
+6) Keep release builds free from inspector UI/overhead.
+```
 
 ## Why use it
 
@@ -46,11 +66,80 @@ import 'package:flutter/foundation.dart';
 import 'package:api_track_inspector/api_track_inspector.dart';
 
 void main() {
+  const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
+  final isDevFlavor = flavor == 'dev';
+
   NetworkInspector.init(
-    enabled: kDebugMode, // recommended: debug only
+    enabled: kDebugMode && isDevFlavor, // visible only in debug + dev flavor
     maxLogs: 100,
   );
   runApp(const MyApp());
+}
+```
+
+### Initialize with your flavor flag (dev only)
+
+If your app already has a config like `AppConfig.isDev`, use:
+
+```dart
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+void main() {
+  NetworkInspector.init(
+    enabled: AppConfig.isDev,
+  );
+  runApp(const MyApp());
+}
+```
+
+With optional configuration features:
+
+```dart
+NetworkInspector.init(
+  enabled: AppConfig.isDev,
+  maxLogs: 100,
+  primaryColor: const Color(0xFF2196F3),
+  secondaryColor: const Color(0xFF1565C0),
+  fabBottomPosition: 100,
+  fabRightPosition: 16,
+  showShareButton: true,
+);
+```
+
+### Real app pattern (MaterialApp + app services)
+
+This is a production-friendly pattern using regular `MaterialApp` with flavor-safe behavior:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+import 'app/core/config/app_config.dart';
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      builder: (context, child) {
+        // Show inspector FAB only in dev flavor.
+        if (AppConfig.isDev && child != null) {
+          child = NetworkInspector.wrapWithFAB(child);
+        }
+
+        return child ?? const SizedBox.shrink();
+      },
+    );
+  }
+}
+
+Future<void> initServices() async {
+  // ... your DI/services
+
+  NetworkInspector.init(
+    enabled: AppConfig.isDev, // dev flavor only
+  );
 }
 ```
 
@@ -230,19 +319,21 @@ class InspectorHttpClient extends http.BaseClient {
 Use this in your AI coding assistant:
 
 ```text
-Integrate `api_track_inspector` into my Flutter app using debug-only mode.
+Integrate `api_track_inspector` into my Flutter app with debug + flavor-safe visibility.
 Requirements:
-1) Call NetworkInspector.init(enabled: kDebugMode) in main().
+1) Call NetworkInspector.init in main() with:
+   - enabled: kDebugMode && (current flavor == dev)
+   - so inspector appears in dev builds and never in production.
 2) Wrap app root using NetworkInspector.wrapWithFAB(child) in MaterialApp/GetMaterialApp builder.
 3) If project uses GetConnect, add NetworkInspector.onRequest/onResponse interceptors.
 4) If project uses Dio or package:http, wire NetworkInspector.logRequest/logResponse manually.
-5) Keep all integration under debug-safe behavior and avoid release overhead.
+5) Keep the integration production-safe with zero release visibility/overhead.
 ```
 
 ## Notes
 
 - Recommended for development and QA builds.
-- For production apps, keep `enabled: false` in release (or `enabled: kDebugMode`).
+- For production apps, keep inspector disabled (for example: `enabled: kDebugMode && flavor == 'dev'`).
 
 ## License
 
