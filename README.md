@@ -95,39 +95,64 @@ class MyApp extends StatelessWidget {
 
 ### Step 3: Add interceptors to your HTTP client
 
-For **GetConnect**:
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:network_inspector/network_inspector.dart';
 
-```dart
-class AppProvider extends GetConnect {
-  dynamic _pendingRequestBody;
-
-  @override
-  void onInit() {
-    httpClient.baseUrl = 'https://api.example.com';
-    
-    // Add Network Inspector interceptors
-    httpClient.addRequestModifier<dynamic>((request) {
-      NetworkInspector.setRequestBody(_pendingRequestBody);
-      _pendingRequestBody = null;
-      return NetworkInspector.onRequest(request);
-    });
-    
-    httpClient.addResponseModifier<dynamic>((request, response) {
-      return NetworkInspector.onResponse(request, response);
-    });
-  }
-
-  // Override to capture request body
-  @override
-  Future<Response<T>> post<T>(String? url, dynamic body, ...) {
-    _pendingRequestBody = body;
-    return super.post<T>(url, body, ...);
-  }
+class InspectedHttpClient extends http.BaseClient {
+  final http.Client _inner;
+  InspectedHttpClient(this._inner);
 
   @override
-  Future<Response<T>> put<T>(String url, dynamic body, ...) {
-    _pendingRequestBody = body;
-    return super.put<T>(url, body, ...);
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    final startedAt = DateTime.now();
+
+    final logId = NetworkInspector.logRequest(
+      method: request.method,
+      url: request.url.toString(),
+      headers: request.headers,
+      // For simple cases body can be omitted here; add custom capture if needed.
+      body: null,
+    );
+
+    try {
+      final response = await _inner.send(request);
+
+      if (logId != null) {
+        final bytes = await response.stream.toBytes();
+        final responseBody = utf8.decode(bytes, allowMalformed: true);
+
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: response.statusCode,
+          body: responseBody,
+          duration: DateTime.now().difference(startedAt),
+        );
+
+        // Re-create response because stream was consumed
+        return http.StreamedResponse(
+          Stream.value(bytes),
+          response.statusCode,
+          contentLength: bytes.length,
+          request: response.request,
+          headers: response.headers,
+          isRedirect: response.isRedirect,
+          persistentConnection: response.persistentConnection,
+          reasonPhrase: response.reasonPhrase,
+        );
+      }
+
+      return response;
+    } catch (e) {
+      if (logId != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          error: e.toString(),
+          duration: DateTime.now().difference(startedAt),
+        );
+      }
+      rethrow;
+    }
   }
 }
 ```
