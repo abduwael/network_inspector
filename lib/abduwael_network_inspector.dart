@@ -25,7 +25,7 @@
 /// httpClient.addRequestModifier((request) => NetworkInspector.onRequest(request));
 /// httpClient.addResponseModifier((req, res) => NetworkInspector.onResponse(req, res));
 /// ```
-library network_inspector;
+library abduwael_network_inspector;
 
 export 'src/network_inspector_main.dart';
 export 'src/services/network_inspector_service.dart';

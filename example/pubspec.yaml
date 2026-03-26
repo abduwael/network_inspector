@@ -1,5 +1,5 @@
-name: network_inspector_example
-description: Example app for network_inspector package.
+name: abduwael_network_inspector_example
+description: Example app for abduwael_network_inspector package.
 publish_to: 'none'
 
 environment:
@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
   get: ^4.6.5
   http: ^1.2.0
-  network_inspector:
+  abduwael_network_inspector:
     path: ../
 
 dev_dependencies:

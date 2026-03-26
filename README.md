@@ -1,9 +1,9 @@
-# network_inspector
+# abduwael_network_inspector
 
 Flutter package to inspect HTTP traffic during development.  
 It provides a draggable in-app FAB, a request log dialog, and helpers for GetConnect plus manual logging hooks for Dio and `package:http`.
 
-[![pub package](https://img.shields.io/pub/v/network_inspector.svg)](https://pub.dev/packages/network_inspector)
+[![pub package](https://img.shields.io/pub/v/abduwael_network_inspector.svg)](https://pub.dev/packages/abduwael_network_inspector)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Why use it
@@ -18,14 +18,14 @@ It provides a draggable in-app FAB, a request log dialog, and helpers for GetCon
 
 ```yaml
 dependencies:
-  network_inspector: ^1.1.5
+  abduwael_network_inspector: ^1.1.5
 ```
 
 ### 2) Install from Git (secondary)
 
 ```yaml
 dependencies:
-  network_inspector:
+  abduwael_network_inspector:
     git:
       url: https://github.com/abduwael/network_inspector.git
       ref: master
@@ -43,7 +43,7 @@ flutter pub get
 
 ```dart
 import 'package:flutter/foundation.dart';
-import 'package:network_inspector/network_inspector.dart';
+import 'package:abduwael_network_inspector/abduwael_network_inspector.dart';
 
 void main() {
   NetworkInspector.init(
@@ -73,7 +73,7 @@ MaterialApp(
 
 ```dart
 import 'package:get/get.dart';
-import 'package:network_inspector/network_inspector.dart';
+import 'package:abduwael_network_inspector/abduwael_network_inspector.dart';
 
 class ApiProvider extends GetConnect {
   @override
@@ -105,7 +105,7 @@ class ApiProvider extends GetConnect {
 
 ```dart
 import 'package:dio/dio.dart';
-import 'package:network_inspector/network_inspector.dart';
+import 'package:abduwael_network_inspector/abduwael_network_inspector.dart';
 
 final dio = Dio();
 
@@ -158,7 +158,7 @@ dio.interceptors.add(
 ```dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:network_inspector/network_inspector.dart';
+import 'package:abduwael_network_inspector/abduwael_network_inspector.dart';
 
 class InspectorHttpClient extends http.BaseClient {
   final http.Client _inner;
@@ -230,7 +230,7 @@ class InspectorHttpClient extends http.BaseClient {
 Use this in your AI coding assistant:
 
 ```text
-Integrate `network_inspector` into my Flutter app using debug-only mode.
+Integrate `abduwael_network_inspector` into my Flutter app using debug-only mode.
 Requirements:
 1) Call NetworkInspector.init(enabled: kDebugMode) in main().
 2) Wrap app root using NetworkInspector.wrapWithFAB(child) in MaterialApp/GetMaterialApp builder.
