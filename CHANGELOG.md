@@ -2,6 +2,20 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.11
+
+- Refreshed pub.dev screenshots (`request_list`, `request_details`, `request_error`); removed local preview copies from the package tree.
+
+## 1.1.10
+
+- README: three pub.dev screenshots (list, success details, error details); full URL and `Authorization` / Bearer values redacted in detail shots.
+- Added `doc/screenshots/request_error.png` for the error/403 flow.
+
+## 1.1.9
+
+- README: show screenshots in a compact two-column table (similar layout to other inspector packages on pub.dev).
+- Removed the demo video from the README and dropped `doc/demo.mp4` from the published package to keep the page and tarball smaller.
+
 ## 1.1.8
 
 - Added README screenshots and a demo video (`doc/screenshots/`, `doc/demo.mp4`).
