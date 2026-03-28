@@ -1,0 +1,2 @@
+# Local review copies duplicate doc/screenshots/*.png; omit from pub tarball
+doc/screenshots/review_before_pub/

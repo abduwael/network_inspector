@@ -1,9 +1,21 @@
 name: api_track_inspector
 description: Flutter network inspector for debug builds with GetConnect interceptors, manual Dio/http logging, and an in-app request viewer.
-version: 1.1.13
+version: 1.1.16
 homepage: https://github.com/abduwael/network_inspector
 repository: https://github.com/abduwael/network_inspector
 issue_tracker: https://github.com/abduwael/network_inspector/issues
+
+screenshots:
+  - description: 'Network inspector request list with method, URL, status, and duration.'
+    path: doc/screenshots/request_list.png
+  - description: 'POST request detail with headers, timing, and metadata.'
+    path: doc/screenshots/request_details.png
+  - description: 'Expandable request and response JSON bodies.'
+    path: doc/screenshots/request_bodies.png
+  - description: 'Error entry with status code and forbidden message.'
+    path: doc/screenshots/request_error.png
+  - description: '403 response with headers and truncated authorization.'
+    path: doc/screenshots/request_error_403.png
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

@@ -2,17 +2,28 @@
 
 All notable changes to this package will be documented in this file.
 
-## 1.1.13
+## 1.1.16
 
-- Replaced `doc/screenshots` with the images from the latest author-provided captures: list export, WhatsApp 8:15 PM (request/response body view, JWT strip redacted), and WhatsApp 6:34 PM (403 + headers, Authorization redacted).
+- Declare five `screenshots` in `pubspec.yaml` so pub.dev serves them from the package (avoids broken README images from `raw.githubusercontent.com` when GitHub is out of sync or blocks embedding).
+- README: replace the wide screenshot table with fixed-width inline previews using paths under `doc/screenshots/`; clarify carousel vs README.
+- Published `doc/screenshots/*.png` match `doc/screenshots/review_before_pub/01`–`05` (same files and order: list, POST detail, bodies, error detail, 403 headers/response).
+
+## 1.1.15
+
+- README screenshots normalized to a uniform 738×1600 canvas (from `review_before_pub` order: list, POST detail, bodies, forbidden error, 403 headers/response).
+
+## 1.1.14
+
+- Confirmed README screenshots match `doc/screenshots/review_before_pub` (unaltered PNGs); `review_before_pub` is excluded from the published package via `.pubignore` to avoid duplicate assets.
 
 ## 1.1.12
 
-- Updated `doc/screenshots/` from the latest captures: request list, success detail (sanitized URL + Bearer via blur), and error detail; scaled the detail shot to match list/error dimensions for the README table.
+- README screenshots are **unaltered** PNG exports (no blur, resize, or overlays); use sanitized demo data in the captures themselves for pub.dev.
 
 ## 1.1.11
 
-- Refreshed pub.dev screenshots (`request_list`, `request_details`, `request_error`); removed local preview copies from the package tree.
+- Five README screenshots from your latest captures: solid-fill redaction (no blur), light sharpen, 640px width. Files: `request_list.png`, `request_details.png`, `request_bodies.png`, `request_error.png`, `request_error_403.png`.
+- Numbered copies for review: `doc/screenshots/review_before_pub/01`–`05` (same pixels as the five files above, before rename).
 
 ## 1.1.10
 
