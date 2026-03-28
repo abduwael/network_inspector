@@ -2,6 +2,14 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.18
+
+- README: use `raw.githubusercontent.com` URLs for screenshot `<img>` tags so images load on pub.dev (relative `doc/screenshots/...` paths in HTML are not resolved on the package page).
+
+## 1.1.17
+
+- Refreshed `doc/screenshots/*.png` from `review_before_pub` (`01`–`05`, including `04_error.png`).
+
 ## 1.1.16
 
 - Declare five `screenshots` in `pubspec.yaml` so pub.dev serves them from the package (avoids broken README images from `raw.githubusercontent.com` when GitHub is out of sync or blocks embedding).

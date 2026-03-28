@@ -13,18 +13,20 @@ No setup overhead:
 
 ## Screenshots
 
-On **pub.dev**, use the screenshot carousel at the top of the package page (same images as below, served from the published package—not from GitHub).
+The **carousel** at the top of this package on [pub.dev](https://pub.dev/packages/api_track_inspector) uses the same five images (from `pubspec.yaml` `screenshots`).
 
-Preview (same order as the carousel: list → POST detail → bodies → error → 403 response):
+README previews below use absolute GitHub **raw** URLs so they render on pub.dev (relative `doc/...` paths in `<img>` tags are not rewritten there, which is why alt text was showing instead of pictures).
+
+Preview (order: list → POST detail → bodies → error → 403 response):
 
 <p align="center">
-<img src="doc/screenshots/request_list.png" width="220" alt="Request list"/>
-<img src="doc/screenshots/request_details.png" width="220" alt="POST request detail"/>
-<img src="doc/screenshots/request_bodies.png" width="220" alt="Request and response bodies"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_list.png" width="220" alt="Request list"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_details.png" width="220" alt="POST request detail"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_bodies.png" width="220" alt="Request and response bodies"/>
 </p>
 <p align="center">
-<img src="doc/screenshots/request_error.png" width="220" alt="Error detail"/>
-<img src="doc/screenshots/request_error_403.png" width="220" alt="403 response and headers"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_error.png" width="220" alt="Error detail"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_error_403.png" width="220" alt="403 response and headers"/>
 </p>
 
 ## Quick AI prompt
@@ -54,7 +56,7 @@ Requirements:
 
 ```yaml
 dependencies:
-  api_track_inspector: ^1.1.16
+  api_track_inspector: ^1.1.18
 ```
 
 ### 2) Install from Git (secondary)
