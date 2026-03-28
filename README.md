@@ -13,7 +13,7 @@ No setup overhead:
 
 ## Screenshots
 
-| ![Request list](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_list.png) | ![Request details](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_details.png) | ![Error detail](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_error.png) |
+| ![Request list](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_list.png) | ![Request / response bodies](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_details.png) | ![403 + headers](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_error.png) |
 | :---: | :---: | :---: |
 
 ## Quick AI prompt
@@ -43,7 +43,7 @@ Requirements:
 
 ```yaml
 dependencies:
-  api_track_inspector: ^1.1.12
+  api_track_inspector: ^1.1.13
 ```
 
 ### 2) Install from Git (secondary)

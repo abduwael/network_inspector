@@ -2,6 +2,10 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.13
+
+- Replaced `doc/screenshots` with the images from the latest author-provided captures: list export, WhatsApp 8:15 PM (request/response body view, JWT strip redacted), and WhatsApp 6:34 PM (403 + headers, Authorization redacted).
+
 ## 1.1.12
 
 - Updated `doc/screenshots/` from the latest captures: request list, success detail (sanitized URL + Bearer via blur), and error detail; scaled the detail shot to match list/error dimensions for the README table.
