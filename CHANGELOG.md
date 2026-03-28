@@ -2,6 +2,10 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.12
+
+- Updated `doc/screenshots/` from the latest captures: request list, success detail (sanitized URL + Bearer via blur), and error detail; scaled the detail shot to match list/error dimensions for the README table.
+
 ## 1.1.11
 
 - Refreshed pub.dev screenshots (`request_list`, `request_details`, `request_error`); removed local preview copies from the package tree.

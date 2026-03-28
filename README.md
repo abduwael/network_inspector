@@ -43,7 +43,7 @@ Requirements:
 
 ```yaml
 dependencies:
-  api_track_inspector: ^1.1.11
+  api_track_inspector: ^1.1.12
 ```
 
 ### 2) Install from Git (secondary)
