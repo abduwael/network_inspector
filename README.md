@@ -11,6 +11,18 @@ No setup overhead:
 [![pub package](https://img.shields.io/pub/v/api_track_inspector.svg)](https://pub.dev/packages/api_track_inspector)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+## Screenshots & demo
+
+Request list with stats, success/error counts, timing, and share actions:
+
+![Network Inspector — request list](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_list.png)
+
+Expanded entry: full URL, status code, and headers (with copy actions):
+
+![Network Inspector — request details](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_details.png)
+
+**Video:** [Open demo walkthrough (MP4)](https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/demo.mp4) — opens or downloads depending on your browser. For an embedded player on pub.dev, upload the same clip to YouTube (or similar) and add a link with a thumbnail.
+
 ## Quick AI prompt
 
 Copy/paste this into your AI assistant:
@@ -38,7 +50,7 @@ Requirements:
 
 ```yaml
 dependencies:
-  api_track_inspector: ^1.1.5
+  api_track_inspector: ^1.1.7
 ```
 
 ### 2) Install from Git (secondary)

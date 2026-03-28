@@ -2,6 +2,11 @@
 
 All notable changes to this package will be documented in this file.
 
+## 1.1.8
+
+- Added README screenshots and a demo video (`doc/screenshots/`, `doc/demo.mp4`).
+- Documented pub.dev-friendly image URLs via `raw.githubusercontent.com`.
+
 ## 1.1.7
 
 - Simplified `example/` app to focus on the two most common integrations: Dio and `package:http`.
