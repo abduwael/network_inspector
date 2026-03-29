@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>README preview (local)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+           line-height: 1.5; max-width: 920px; margin: 2rem auto; padding: 0 1rem;
+           color: #212529; background: #fff; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                font-size: 0.9em; }
+    pre { background: #f6f8fa; padding: 1rem; overflow: auto; border-radius: 6px; }
+    code { background: #f6f8fa; padding: 0.15em 0.35em; border-radius: 4px; }
+    pre code { background: none; padding: 0; }
+    img { max-width: 100%; height: auto; vertical-align: middle; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #d0d7de; padding: 0.5rem; }
+    blockquote { border-left: 4px solid #d0d7de; margin-left: 0; padding-left: 1rem; color: #57606a; }
+    .note { background: #fff8c5; border: 1px solid #e0c040; padding: 0.75rem 1rem;
+            border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <div class="note">
+    <strong>Local preview only.</strong> pub.dev applies extra sanitization and styling;
+    check the carousel separately (<code>pubspec.yaml</code> <code>screenshots</code>).
+    Re-run this script after README edits.
+  </div>
+  <article class="markdown-body">
+<h1>api_track_inspector</h1>
+<p>Inspect every API call in minutes, not hours.<br />
+<code>api_track_inspector</code> adds a draggable in-app monitor with request details, timing, errors, and sharing, with quick integration for GetConnect, Dio, and <code>package:http</code>.</p>
+<p>No setup overhead:</p>
+<ul>
+<li>Initialize once.</li>
+<li>Wrap your app with <code>NetworkInspector.wrapWithFAB</code>.</li>
+<li>Plug in your client interceptors (<code>onRequest</code>, <code>onResponse</code>) or manual hooks (<code>logRequest</code>, <code>logResponse</code>).</li>
+</ul>
+<p><a href="https://pub.dev/packages/api_track_inspector"><img src="https://img.shields.io/pub/v/api_track_inspector.svg" alt="pub package" /></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT" /></a></p>
+<h2>Screenshots</h2>
+<p>The <strong>carousel</strong> at the top of this package on <a href="https://pub.dev/packages/api_track_inspector">pub.dev</a> uses the same five images (from <code>pubspec.yaml</code> <code>screenshots</code>).</p>
+<p>README previews below use absolute GitHub <strong>raw</strong> URLs so they render on pub.dev (relative <code>doc/...</code> paths in <code>&lt;img&gt;</code> tags are not rewritten there, which is why alt text was showing instead of pictures).</p>
+<p>Preview (order: list → POST detail → bodies → error → 403 response):</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_list.png" width="220" alt="Request list"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_details.png" width="220" alt="POST request detail"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_bodies.png" width="220" alt="Request and response bodies"/>
+</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_error.png" width="220" alt="Error detail"/>
+<img src="https://raw.githubusercontent.com/abduwael/network_inspector/master/doc/screenshots/request_error_403.png" width="220" alt="403 response and headers"/>
+</p>
+<h2>Quick AI prompt</h2>
+<p>Copy/paste this into your AI assistant:</p>
+<pre><code class="language-text">Integrate `api_track_inspector` into my Flutter app with dev-only visibility.
+Requirements:
+1) Initialize with NetworkInspector.init(enabled: AppConfig.isDev) in startup.
+2) Optionally configure maxLogs, colors, FAB position, and showShareButton.
+3) Wrap app root using NetworkInspector.wrapWithFAB(child) in MaterialApp/GetMaterialApp builder.
+4) If project uses GetConnect, add NetworkInspector.onRequest/onResponse interceptors.
+5) If project uses Dio or package:http, wire NetworkInspector.logRequest/logResponse manually.
+6) Keep release builds free from inspector UI/overhead.
+</code></pre>
+<h2>Why use it</h2>
+<ul>
+<li>Capture request/response data while testing APIs.</li>
+<li>Keep debugging UI inside the app (no external proxy needed).</li>
+<li>Integrate quickly with GetConnect (<code>onRequest</code>, <code>onResponse</code>) or manually via <code>logRequest</code>, <code>logResponse</code>.</li>
+</ul>
+<h2>Installation</h2>
+<h3>1) Install from pub.dev (primary)</h3>
+<pre><code class="language-yaml">dependencies:
+  api_track_inspector: ^1.1.18
+</code></pre>
+<h3>2) Install from Git (secondary)</h3>
+<pre><code class="language-yaml">dependencies:
+  api_track_inspector:
+    git:
+      url: https://github.com/abduwael/network_inspector.git
+      ref: master
+</code></pre>
+<p>Then run:</p>
+<pre><code class="language-bash">flutter pub get
+</code></pre>
+<h2>Quick start</h2>
+<h3>Initialize once</h3>
+<pre><code class="language-dart">import 'package:flutter/foundation.dart';
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+void main() {
+  const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
+  final isDevFlavor = flavor == 'dev';
+
+  NetworkInspector.init(
+    enabled: kDebugMode &amp;&amp; isDevFlavor, // visible only in debug + dev flavor
+    maxLogs: 100,
+  );
+  runApp(const MyApp());
+}
+</code></pre>
+<h3>Initialize with your flavor flag (dev only)</h3>
+<p>If your app already has a config like <code>AppConfig.isDev</code>, use:</p>
+<pre><code class="language-dart">import 'package:api_track_inspector/api_track_inspector.dart';
+
+void main() {
+  NetworkInspector.init(
+    enabled: AppConfig.isDev,
+  );
+  runApp(const MyApp());
+}
+</code></pre>
+<p>With optional configuration features:</p>
+<pre><code class="language-dart">NetworkInspector.init(
+  enabled: AppConfig.isDev,
+  maxLogs: 100,
+  primaryColor: const Color(0xFF2196F3),
+  secondaryColor: const Color(0xFF1565C0),
+  fabBottomPosition: 100,
+  fabRightPosition: 16,
+  showShareButton: true,
+);
+</code></pre>
+<h3>Real app pattern (MaterialApp + app services)</h3>
+<p>This is a production-friendly pattern using regular <code>MaterialApp</code> with flavor-safe behavior:</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+import 'app/core/config/app_config.dart';
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      builder: (context, child) {
+        // Show inspector FAB only in dev flavor.
+        if (AppConfig.isDev &amp;&amp; child != null) {
+          child = NetworkInspector.wrapWithFAB(child);
+        }
+
+        return child ?? const SizedBox.shrink();
+      },
+    );
+  }
+}
+
+Future&lt;void&gt; initServices() async {
+  // ... your DI/services
+
+  NetworkInspector.init(
+    enabled: AppConfig.isDev, // dev flavor only
+  );
+}
+</code></pre>
+<h3>Add floating inspector button</h3>
+<pre><code class="language-dart">MaterialApp(
+  builder: (context, child) {
+    if (child == null) return const SizedBox.shrink();
+    return NetworkInspector.wrapWithFAB(child);
+  },
+);
+</code></pre>
+<h2>Integration guides</h2>
+<h3>GetConnect interceptor usage</h3>
+<p><code>onRequest</code> reads a temporary body value, so set it before body-based calls.</p>
+<pre><code class="language-dart">import 'package:get/get.dart';
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+class ApiProvider extends GetConnect {
+  @override
+  void onInit() {
+    httpClient.addRequestModifier&lt;dynamic&gt;((request) {
+      return NetworkInspector.onRequest(request);
+    });
+
+    httpClient.addResponseModifier&lt;dynamic&gt;((request, response) {
+      return NetworkInspector.onResponse(request, response);
+    });
+
+    super.onInit();
+  }
+
+  Future&lt;Response&lt;T&gt;&gt; postWithInspector&lt;T&gt;(String url, dynamic body) {
+    NetworkInspector.setRequestBody(body);
+    return post&lt;T&gt;(url, body);
+  }
+
+  Future&lt;Response&lt;T&gt;&gt; putWithInspector&lt;T&gt;(String url, dynamic body) {
+    NetworkInspector.setRequestBody(body);
+    return put&lt;T&gt;(url, body);
+  }
+}
+</code></pre>
+<h3>Dio interceptor usage</h3>
+<pre><code class="language-dart">import 'package:dio/dio.dart';
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+final dio = Dio();
+
+dio.interceptors.add(
+  InterceptorsWrapper(
+    onRequest: (options, handler) {
+      final logId = NetworkInspector.logRequest(
+        method: options.method,
+        url: options.uri.toString(),
+        headers: Map&lt;String, dynamic&gt;.from(options.headers),
+        body: options.data,
+      );
+      options.extra['_inspectorLogId'] = logId;
+      options.extra['_inspectorStart'] = DateTime.now();
+      handler.next(options);
+    },
+    onResponse: (response, handler) {
+      final logId = response.requestOptions.extra['_inspectorLogId'] as String?;
+      final start = response.requestOptions.extra['_inspectorStart'] as DateTime?;
+      if (logId != null &amp;&amp; start != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: response.statusCode,
+          body: response.data,
+          duration: DateTime.now().difference(start),
+        );
+      }
+      handler.next(response);
+    },
+    onError: (error, handler) {
+      final logId = error.requestOptions.extra['_inspectorLogId'] as String?;
+      final start = error.requestOptions.extra['_inspectorStart'] as DateTime?;
+      if (logId != null &amp;&amp; start != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: error.response?.statusCode,
+          body: error.response?.data,
+          duration: DateTime.now().difference(start),
+          error: error.message,
+        );
+      }
+      handler.next(error);
+    },
+  ),
+);
+</code></pre>
+<h3>package:http wrapped client usage</h3>
+<pre><code class="language-dart">import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:api_track_inspector/api_track_inspector.dart';
+
+class InspectorHttpClient extends http.BaseClient {
+  final http.Client _inner;
+  InspectorHttpClient(this._inner);
+
+  @override
+  Future&lt;http.StreamedResponse&gt; send(http.BaseRequest request) async {
+    final startedAt = DateTime.now();
+
+    final logId = NetworkInspector.logRequest(
+      method: request.method,
+      url: request.url.toString(),
+      headers: Map&lt;String, dynamic&gt;.from(request.headers),
+    );
+
+    try {
+      final streamed = await _inner.send(request);
+      final duration = DateTime.now().difference(startedAt);
+
+      final bodyBytes = await streamed.stream.toBytes();
+      final bodyText = utf8.decode(bodyBytes, allowMalformed: true);
+
+      if (logId != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          statusCode: streamed.statusCode,
+          body: bodyText,
+          duration: duration,
+        );
+      }
+
+      return http.StreamedResponse(
+        Stream.fromIterable([bodyBytes]),
+        streamed.statusCode,
+        request: streamed.request,
+        headers: streamed.headers,
+        reasonPhrase: streamed.reasonPhrase,
+        isRedirect: streamed.isRedirect,
+        persistentConnection: streamed.persistentConnection,
+        contentLength: streamed.contentLength,
+      );
+    } catch (e) {
+      if (logId != null) {
+        NetworkInspector.logResponse(
+          logId: logId,
+          duration: DateTime.now().difference(startedAt),
+          error: e.toString(),
+        );
+      }
+      rethrow;
+    }
+  }
+}
+</code></pre>
+<h2>API reference</h2>
+<ul>
+<li><code>init(...)</code>: initialize the inspector and config.</li>
+<li><code>wrapWithFAB(child)</code>: overlay draggable FAB to open dialog.</li>
+<li><code>onRequest(request)</code>: GetConnect request hook.</li>
+<li><code>onResponse(request, response)</code>: GetConnect response hook.</li>
+<li><code>logRequest(...)</code>: manual request logging (Dio/http/others).</li>
+<li><code>logResponse(...)</code>: manual response/error logging.</li>
+<li><code>clearLogs()</code>: clear in-memory logs.</li>
+<li><code>exportLogs()</code>: export logs JSON string.</li>
+</ul>
+<h2>AI quick prompt (copy/paste)</h2>
+<p>Use this in your AI coding assistant:</p>
+<pre><code class="language-text">Integrate `api_track_inspector` into my Flutter app with debug + flavor-safe visibility.
+Requirements:
+1) Call NetworkInspector.init in main() with:
+   - enabled: kDebugMode &amp;&amp; (current flavor == dev)
+   - so inspector appears in dev builds and never in production.
+2) Wrap app root using NetworkInspector.wrapWithFAB(child) in MaterialApp/GetMaterialApp builder.
+3) If project uses GetConnect, add NetworkInspector.onRequest/onResponse interceptors.
+4) If project uses Dio or package:http, wire NetworkInspector.logRequest/logResponse manually.
+5) Keep the integration production-safe with zero release visibility/overhead.
+</code></pre>
+<h2>Notes</h2>
+<ul>
+<li>Recommended for development and QA builds.</li>
+<li>For production apps, keep inspector disabled (for example: <code>enabled: kDebugMode &amp;&amp; flavor == 'dev'</code>).</li>
+</ul>
+<h2>License</h2>
+<p>MIT License. See <code>LICENSE</code>.</p>
+
+  </article>
+</body>
+</html>

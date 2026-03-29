@@ -2,10 +2,10 @@
   "configVersion": 2,
   "packages": [
     {
-      "name": "args",
-      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.7.0",
+      "name": "api_track_inspector",
+      "rootUri": "../../",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.0"
     },
     {
       "name": "async",
@@ -48,6 +48,18 @@
       "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.7",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "dio",
+      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/dio-5.9.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "dio_web_adapter",
+      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/dio_web_adapter-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "fake_async",
@@ -116,6 +128,18 @@
       "languageVersion": "2.15"
     },
     {
+      "name": "http",
+      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "http_parser",
+      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "leak_tracker",
       "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/leak_tracker-10.0.7",
       "packageUri": "lib/",
@@ -138,12 +162,6 @@
       "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/lints-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
-    },
-    {
-      "name": "markdown",
-      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/markdown-7.3.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
     },
     {
       "name": "matcher",
@@ -309,7 +327,7 @@
     },
     {
       "name": "uuid",
-      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/uuid-4.5.2",
+      "rootUri": "file:///C:/Users/My%20Lab/AppData/Local/Pub/Cache/hosted/pub.dev/uuid-4.5.3",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -344,13 +362,13 @@
       "languageVersion": "3.3"
     },
     {
-      "name": "api_track_inspector",
+      "name": "api_track_inspector_example",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2026-03-28T20:03:51.820666Z",
+  "generated": "2026-03-28T20:02:34.596507Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///D:/flutter_windows_3.27.3-stable/flutter",

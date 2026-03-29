@@ -1,2 +1,5 @@
 # Local review copies duplicate doc/screenshots/*.png; omit from pub tarball
 doc/screenshots/review_before_pub/
+
+# Generated local README preview (dart run tool/preview_readme.dart)
+tool/readme_preview.html

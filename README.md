@@ -353,6 +353,16 @@ Requirements:
 - Recommended for development and QA builds.
 - For production apps, keep inspector disabled (for example: `enabled: kDebugMode && flavor == 'dev'`).
 
+## Preview README before publishing
+
+Approximate how the README will look on pub.dev (GFM-style markdown and embedded HTML):
+
+```bash
+dart run tool/preview_readme.dart
+```
+
+Then open `tool/readme_preview.html` in a browser. Pub.dev may still differ slightly (sanitization and site CSS). The `pubspec.yaml` **screenshots** carousel is separate—use `dart pub publish --dry-run` to confirm which files are included.
+
 ## License
 
 MIT License. See `LICENSE`.
